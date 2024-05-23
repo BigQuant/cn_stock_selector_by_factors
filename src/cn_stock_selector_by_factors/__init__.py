@@ -66,6 +66,7 @@ FROM {base_table_id}
 JOIN {table_id} USING(date, instrument)
 '''
 
+REMOVE_STRING_RE = re.compile(r"'[^']*'")
 TABLE_NAME_RE = re.compile(r'(?<!\.)\b\w+\b(?=\.\w)')
 
 
@@ -118,7 +119,7 @@ def _parse_expr(expr: str) -> dict:
         lines.append(line)
     expr = " ".join(lines)
 
-    tables = TABLE_NAME_RE.findall(expr)
+    tables = TABLE_NAME_RE.findall(REMOVE_STRING_RE.sub('', expr))
 
     return {"expr": expr, "tables": tables}
 
